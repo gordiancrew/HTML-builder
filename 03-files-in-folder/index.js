@@ -9,7 +9,7 @@ fs.readdir(pathControl, { withFileTypes: true },
             console.log(err);
         else {
             files.forEach(file => {
-                console.log( path.extname(file.name));
+                // console.log( path.extname(file.name));
 
 
 
@@ -19,12 +19,12 @@ fs.readdir(pathControl, { withFileTypes: true },
                       console.log(error);
                     }
                     else {
-                      console.log("Stats object for: example_file.txt");
-                      console.log(stats);
+                     
+                      console.log("--"+file.name+"--"+stats.size)
                     
                       // Using methods of the Stats object
-                      console.log("Path is file:", stats.isFile());
-                      console.log("Path is directory:", stats.isDirectory());
+                      // console.log("Path is file:", stats.isFile());
+                      // console.log("Path is directory:", stats.isDirectory());
                     }
                   });
 
