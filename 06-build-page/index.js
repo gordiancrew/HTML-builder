@@ -11,10 +11,9 @@ const pathIndex = path.join(__dirname, '/project-dist/index.html');
 
 
 function parsingComponentsToArray() {
- 
+
     fs.readdir(pathComponents, { withFileTypes: true },
         (err, files) => {
-            console.log("FILES:");
             if (err)
                 console.log(err);
             else {
@@ -25,8 +24,6 @@ function parsingComponentsToArray() {
                         }
                         else {
                             let arrName = file.name.split(".");
-                            console.log(arrName[0] + " - " + arrName[1] +
-                                " - " + stats.size / 1000 + "kb");
                             if (arrName[1] === 'html') {
                                 fs.readFile(path.join(pathComponents, file.name), 'utf8', function (err, data) {
                                     str = str.replace("{{" + arrName[0] + "}}", data);
@@ -34,22 +31,18 @@ function parsingComponentsToArray() {
                                         if (!err) {
                                             fs.truncate(pathIndex, err => {
                                                 if (err) throw err; // не удалось очистить файл
-                                                console.log("Файл успешно очищен");
-
                                                 fs.writeFile(pathIndex, str, (err) => {
                                                     if (err) throw err;
-
                                                 });
                                             });
                                         }
                                         else if (err.code === 'ENOENT') {
                                             fs.writeFile(pathIndex, str, (err) => {
                                                 if (err) throw err;
-
                                             });
                                         }
                                     });
-                                 });
+                                });
                             }
                         }
                     });
@@ -64,16 +57,23 @@ function copyDir(pathFrom, pathTo) {
             files.forEach(file => {
                 fs.stat(path.join(pathFrom, file.name), function (err, stats) {
                     if (!(stats.isFile())) {
-                        console.log('это папка');
-                        fs.mkdir(path.join(pathTo, file.name), err => {
-                            if (err) throw err;
-                            console.log("Папка " + path.join(pathTo, file.name) +
-                                " успешно создана!");
-                            copyDir(path.join(pathFrom, file.name), path.join(pathTo, file.name));
+                        fs.stat(path.join(pathTo, file.name), function (err) {
+                            if (!err) {
+                                copyDir(path.join(pathFrom, file.name), path.join(pathTo, file.name));
+
+                            }
+                            else if (err.code === 'ENOENT') {
+                                fs.mkdir(path.join(pathTo, file.name), err => {
+                                    if (err) throw err;
+                                    console.log("Папка " + path.join(pathTo, file.name) +
+                                        " успешно создана!");
+                                    copyDir(path.join(pathFrom, file.name), path.join(pathTo, file.name));
+                                });
+
+                            }
                         });
                     }
                     else {
-                        console.log('это файл');
                         fs.copyFile(path.join(pathFrom, file.name), path.join(pathTo, file.name), err => {
                             if (err) throw err;
                             console.log("Файл " + file.name + " из папки " +
@@ -89,7 +89,6 @@ function copyDir(pathFrom, pathTo) {
 function copyStyles() {
     fs.readdir(pathStylesFrom, { withFileTypes: true },
         (err, files) => {
-            console.log("FILES:");
             if (err)
                 console.log(err);
             else {
@@ -125,22 +124,35 @@ function copyStyles() {
 
 }
 
+function creatProject() {
+
+    copyDir(pathAssetsFrom, pathAssetsTo);
+    copyStyles();
+    parsingComponentsToArray();
+}
+
 let str = '';
 let stream = new fs.ReadStream(pathThemplate, { encoding: 'utf-8' });
 
 stream.on('data', chunk => str += chunk);
 stream.on('end', () => {
-    fs.mkdir(pathDist, err => {
-        if (err) throw err;
-        console.log("Папка " + pathDist +
-            " успешно создана!");
-        fs.mkdir(pathAssetsTo, err => {
-            if (err) throw err;
-            console.log("Папка " + pathAssetsTo +
-                " успешно создана!");
-            copyDir(pathAssetsFrom, pathAssetsTo);
-            copyStyles();
-            parsingComponentsToArray();
-        });
+
+    fs.stat(pathDist, function (err) {
+        if (!err) {
+            console.log("Папка есть");
+            creatProject();
+        }
+        else if (err.code === 'ENOENT') {
+            fs.mkdir(pathDist, err => {
+                if (err) throw err;
+                console.log("Папка " + pathDist +
+                    " успешно создана!");
+                fs.mkdir(pathAssetsTo, err => {
+                    if (err) throw err;
+                    console.log("Папка " + pathAssetsTo + " успешно создана!");
+                    creatProject();
+                });
+            });
+        }
     });
 });
