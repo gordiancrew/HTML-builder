@@ -6,6 +6,91 @@ const pathStylesTo = path.join(__dirname, '/project-dist/style.css');
 const pathDist = path.join(__dirname, '/project-dist/');
 const pathAssetsFrom = path.join(__dirname, '/assets/');
 const pathAssetsTo = path.join(__dirname, '/project-dist/assets');
+const pathComponents = path.join(__dirname, '/components/')
+
+
+function parsingComponentsToArray() {
+    let arr = [];
+    arr.push({component:"ww",content:"eee"});
+
+
+    fs.readdir(pathComponents, { withFileTypes: true },
+        (err, files) => {
+            console.log("FILES:");
+            if (err)
+                console.log(err);
+            else {
+                files.forEach(file => {
+
+
+
+                    fs.stat(path.join(pathComponents, file.name), (error, stats) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                        else {
+                            let arrName = file.name.split(".");
+                            console.log(arrName[0] + " - " + arrName[1] +
+                                " - " + stats.size / 1000 + "kb");
+
+                            if (arrName[1] === 'html') {
+
+                               
+
+
+                                fs.readFile(path.join(pathComponents, file.name), 'utf8', function(err, data){
+      
+                            
+
+                                    arr.push({component:arrName[0],content:data});
+                                    
+                                }
+                                
+                                
+                                );console.log("oooooooooooooooooooooooooooooooo"+arr);
+
+
+
+
+
+
+
+
+
+
+
+
+                            }
+
+
+
+
+
+                        }
+                    });
+
+
+
+
+
+
+
+
+
+                }
+                
+                
+                
+                )
+
+                
+            }
+           
+        })
+        
+
+
+}
 
 
 
@@ -34,7 +119,7 @@ function copyDir(pathFrom, pathTo) {
 
 
                     }
-                    else{
+                    else {
                         console.log('это файл');
 
 
@@ -105,10 +190,11 @@ fs.mkdir(pathDist, err => {
         if (err) throw err;
         console.log("Папка " + pathAssetsTo +
             " успешно создана!");
-       
-       
-            copyDir(pathAssetsFrom, pathAssetsTo);
+
+
+        copyDir(pathAssetsFrom, pathAssetsTo);
         copyStyles();
+        parsingComponentsToArray();
 
 
     });
