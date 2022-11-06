@@ -13,11 +13,11 @@ fs.readdir(pathControl, { withFileTypes: true },
         if (error)
           console.log(error);
 
-if(file.isFile()){
-        let arrName = file.name.split(".");
-        console.log(arrName[0] + " - " + arrName[1] +
-          " - " + stats.size / 1000 + "kb");
-}
+        if (file.isFile()) {
+          let arrName = file.name.split(".");
+          console.log(arrName[0] + " - " + arrName[1] +
+            " - " + stats.size / 1000 + "kb");
+        }
       });
     })
   })
