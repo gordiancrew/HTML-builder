@@ -3,16 +3,6 @@ const path = require('path');
 const pathFolder = path.join(__dirname, '/files/');
 const pathFolderCopy = path.join(__dirname, '/files-copy/');
 
-
-function createAndCopyDir() {
-    fs.mkdir(pathFolderCopy, err => {
-        if (err) throw err;
-        console.log("Папка " + pathFolderCopy +
-            " успешно создана!");
-        copyDir();
-    });
-}
-
 function copyDir() {
     fs.readdir(pathFolder, { withFileTypes: true },
         (err, files) => {
@@ -25,6 +15,16 @@ function copyDir() {
             })
         })
 
+}
+
+
+function createAndCopyDir() {
+    fs.mkdir(pathFolderCopy, err => {
+        if (err) throw err;
+        console.log("Папка " + pathFolderCopy +
+            " успешно создана!");
+        copyDir();
+    });
 }
 
 function cleanAndCopyDir() {
