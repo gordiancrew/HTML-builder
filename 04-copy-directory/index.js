@@ -14,7 +14,6 @@ function copyDir() {
                 });
             })
         })
-
 }
 
 
@@ -30,6 +29,7 @@ function createAndCopyDir() {
 function cleanAndCopyDir() {
     fs.readdir(pathFolderCopy, { withFileTypes: true },
         (err, files) => {
+            if (err) throw err;
             files.forEach(file => {
                 fs.unlink(path.join(pathFolderCopy, file.name), err => {
                     if (err) throw err;
@@ -37,7 +37,7 @@ function cleanAndCopyDir() {
                         pathFolderCopy + " удален!");
                 });
             })
-            copyDir();
+             copyDir();
         }
     );
 }
