@@ -7,18 +7,17 @@ fs.readdir(pathControl, { withFileTypes: true },
     console.log("FILES:");
     if (err)
       console.log(err);
-    else {
-      files.forEach(file => {
-        fs.stat(path.join(pathControl, file.name), (error, stats) => {
-          if (error) {
-            console.log(error);
-          }
-          else {
-            let arrName = file.name.split(".");
-            console.log(arrName[0] + " - " + arrName[1] +
-              " - " + stats.size / 1000 + "kb");
-          }
-        });
-      })
-    }
+
+    files.forEach(file => {
+      fs.stat(path.join(pathControl, file.name), (error, stats) => {
+        if (error)
+          console.log(error);
+
+if(file.isFile()){
+        let arrName = file.name.split(".");
+        console.log(arrName[0] + " - " + arrName[1] +
+          " - " + stats.size / 1000 + "kb");
+}
+      });
+    })
   })
